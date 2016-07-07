@@ -10,7 +10,7 @@ module Heroic
 
     CERTIFICATE_CACHE = Heroic::LRUCache.new(MAXIMUM_ALLOWED_CERTIFICATES) do |cert_url|
       begin
-        cert_data = open(cert_url)
+        cert_data = open(cert_url, proxy: ENV['http_proxy'])
         OpenSSL::X509::Certificate.new(cert_data.read)
       rescue OpenSSL::X509::CertificateError => e
         raise SNS::Error.new("unable to parse signing certificate: #{e.message}; URL: #{cert_url}")

@@ -115,10 +115,10 @@ module Heroic
           message.verify!
           case message.type
           when 'SubscriptionConfirmation'
-            open(message.subscribe_url) if @auto_confirm
+            open(message.subscribe_url, proxy: ENV['http_proxy']) if @auto_confirm
             return OK_RESPONSE unless @auto_confirm.nil?
           when 'UnsubscribeConfirmation'
-            open(message.subscribe_url) if @auto_resubscribe
+            open(message.subscribe_url, proxy: ENV['http_proxy']) if @auto_resubscribe
             return OK_RESPONSE unless @auto_resubscribe.nil?
           end
           env['sns.message'] = message
@@ -139,7 +139,7 @@ module Heroic
           begin
             message = Message.new(env['rack.input'].read)
             message.verify!
-            open(message.unsubscribe_url)
+            open(message.unsubscribe_url, proxy: ENV['http_proxy'])
           rescue => e
             raise Error.new("error handling off-topic notification: #{e.message}", message)
           end
